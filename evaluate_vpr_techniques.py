@@ -106,11 +106,7 @@ def evaluate_vpr_techniques(dataset_dir,precomputed_directory,techniques, save_d
             matching_indices_array = np.asarray(matching_indices_list)
             matching_scores_array = np.asarray(matching_scores_list)
             all_retrievedindices_scores_allqueries_array = np.asarray(all_retrievedindices_scores_allqueries)
-<<<<<<< HEAD
-
-=======
             
->>>>>>> 67ddebd (Modifications for incorporating custom VPR nets)
             if (save_descriptors==1):
                 cwd=os.getcwd()
                 
@@ -123,28 +119,14 @@ def evaluate_vpr_techniques(dataset_dir,precomputed_directory,techniques, save_d
                          all_retrievedindices_scores_allqueries=all_retrievedindices_scores_allqueries_array,
                          encoding_time=np.asarray([encoding_time//itr]),
                          matching_time=np.asarray([matching_time//itr]))
-<<<<<<< HEAD
-
         else:
             cwd=os.getcwd()
             precomputed_data=np.loadz(cwd+'/'+precomputed_directory+vpr_tech.replace("_Precomputed","")+'/'+'precomputed_data_corrected.npz' )
-            
-=======
-        
-        else:
-            cwd=os.getcwd()
-            precomputed_data=np.loadz(cwd+'/'+precomputed_directory+vpr_tech.replace("_Precomputed","")+'/'+'precomputed_data_corrected.npz' )
-
->>>>>>> 67ddebd (Modifications for incorporating custom VPR nets)
             query_indices_dict[vpr_tech]=precomputed_data['query_indices']
             matching_indices_dict[vpr_tech]=precomputed_data['matching_indices']
             matching_scores_dict[vpr_tech]=precomputed_data['matching_scores']
             all_retrievedindices_scores_allqueries_dict[vpr_tech]=precomputed_data['all_retrievedindices_scores_allqueries']
             encoding_time_dict[vpr_tech]=precomputed_data['encoding_time']  #NOTE: If the descriptors were not computed on the same computational platform as the one running this code, this value of encoding time is compromised and accordingly all the metrics that utilise this (like RMF etc) are not applicable. 
             matching_time_dict[vpr_tech]=precomputed_data['matching_time']  #NOTE: If the descriptors were not computed on the same computational platform as the one running this code, this value of matching time is compromised and accordingly all the metrics that utilise this (like RMF etc) are not applicable.
-<<<<<<< HEAD
-            
-=======
         
->>>>>>> 67ddebd (Modifications for incorporating custom VPR nets)
     return query_indices_dict, matching_indices_dict, matching_scores_dict, encoding_time_dict, matching_time_dict, all_retrievedindices_scores_allqueries_dict, descriptor_shape_dict

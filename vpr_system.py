@@ -40,30 +40,42 @@ def selective_import(VPR_technique):
     elif (VPR_technique=='HOG'):
         from VPR_Techniques.HOG_VPR import compute_map_features, compute_query_desc, perform_VPR
 
+    elif(VPR_technique=='custom_vpr_tech'):
+        from VPR_Techniques.custom_vpr_tech import compute_map_features, compute_query_desc, perform_VPR
+
     else:
         sys.exit("Method {} not supported. Please check if letters' case match exactly.".format(VPR_technique))
    
     return compute_map_features, compute_query_desc, perform_VPR     
 
-def compute_image_descriptors(robot_map, vpr_tech='CoHOG'): #Takes in a list of reference images as outputs a list of feature descriptors corresponding to these images. 
+def compute_image_descriptors(robot_map, cstm_ntwrk, vpr_tech='CoHOG'): #Takes in a list of reference images as outputs a list of feature descriptors corresponding to these images. 
     compute_map_features, compute_query_desc, perform_VPR = selective_import(vpr_tech) #Imports the VPR template functions for the specified 'vpr_tech'
-    map_features=compute_map_features(robot_map)
+    if cstm_ntwrk==None:
+        map_features=compute_map_features(robot_map)
+    else:
+        map_features=compute_map_features(robot_map, cstm_ntwrk)
 #    print(vpr_tech + ' Descriptor Size: ',np.asarray(map_features[0]).shape)
 #    print(vpr_tech + ' Descriptor Type: ',np.asarray(map_features[0]).dtype)
     return map_features
 
-def match_two_images(query_image,ref,vpr_tech='CoHOG'): #For matching two images only.
+def match_two_images(query_image,ref, cstm_ntwrk, vpr_tech='CoHOG'): #For matching two images only.
     compute_map_features, compute_query_desc, perform_VPR = selective_import(vpr_tech) #Imports the VPR template functions for the specified 'vpr_tech'
-    ref_desc=compute_map_features(ref)
+    if cstm_ntwrk==None:
+        ref_desc=compute_map_features(ref)
+    else:
+        ref_desc=compute_map_features(ref, cstm_ntwrk)
     query_desc=compute_query_desc(query_image)
     matching_score,matched_vertex,_=perform_VPR(query_desc,ref_desc) 
     
     return matching_score,matched_vertex
 
-def place_match(query_image,robot_map_features,vpr_tech='CoHOG'): #For matching an input query image with a precomputed map of reference descriptors.
+def place_match(query_image,robot_map_features, cstm_ntwrk, vpr_tech='CoHOG'): #For matching an input query image with a precomputed map of reference descriptors.
     compute_map_features, compute_query_desc, perform_VPR = selective_import(vpr_tech) #Imports the VPR template functions for the specified 'vpr_tech'
     t1=time.time()
-    query_desc=compute_query_desc(query_image)
+    if cstm_ntwrk==None:
+        query_desc=compute_query_desc(query_image)
+    else:
+        query_desc=compute_query_desc(query_image, cstm_ntwrk)
     t2=time.time()
     matching_score,matched_vertex, confusion_vector=perform_VPR(query_desc,robot_map_features)  
     t3=time.time()

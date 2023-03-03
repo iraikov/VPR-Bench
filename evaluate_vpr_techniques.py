@@ -12,7 +12,7 @@ import os
 import glob
 import numpy as np
 
-def evaluate_vpr_techniques(dataset_dir,precomputed_directory,techniques, save_descriptors, scale_percent=100):
+def evaluate_vpr_techniques(dataset_dir,precomputed_directory,techniques, save_descriptors, cstm_ntwrk, scale_percent=100):
     
     everything_precomputed=1 
     for vpr_tech in techniques:
@@ -63,7 +63,7 @@ def evaluate_vpr_techniques(dataset_dir,precomputed_directory,techniques, save_d
         print(vpr_tech)
         
         if (vpr_tech.find('Precomputed')==-1):
-            ref_images_desc= compute_image_descriptors(ref_images_list, vpr_tech) #Compute descriptors of all reference images for the VPR technique.
+            ref_images_desc= compute_image_descriptors(ref_images_list, cstm_ntwrk, vpr_tech) #Compute descriptors of all reference images for the VPR technique.
     
             itr=0
             for image_name in sorted(query_images_names,key=lambda x:int(x.split(".")[0])):     #Iterating over each query image instead of loading them all at once, to save RAM space
@@ -79,7 +79,7 @@ def evaluate_vpr_techniques(dataset_dir,precomputed_directory,techniques, save_d
                     query_image = cv2.resize(query_image, dim, interpolation = cv2.INTER_AREA)
                     #####################################################
     
-                    matched, matching_index, score, t_e, t_m, all_retrievedindices_scores_perquery  = place_match(query_image,ref_images_desc, vpr_tech)  #Matches a given query image with all reference images.
+                    matched, matching_index, score, t_e, t_m, all_retrievedindices_scores_perquery  = place_match(query_image,ref_images_desc, cstm_ntwrk, vpr_tech)  #Matches a given query image with all reference images.
                     
                     query_indices_list.append(itr)
                     matching_indices_list.append(matching_index)
@@ -106,27 +106,29 @@ def evaluate_vpr_techniques(dataset_dir,precomputed_directory,techniques, save_d
             matching_indices_array = np.asarray(matching_indices_list)
             matching_scores_array = np.asarray(matching_scores_list)
             all_retrievedindices_scores_allqueries_array = np.asarray(all_retrievedindices_scores_allqueries)
-            
+
             if (save_descriptors==1):
                 cwd=os.getcwd()
                 
                 if not os.path.exists(cwd+'/'+precomputed_directory+vpr_tech):
                     os.makedirs(cwd+'/'+precomputed_directory+vpr_tech)
                 np.savez(cwd+'/'+precomputed_directory+vpr_tech+'/'+'precomputed_data_corrected.npz',
-                         query_indices=query_indices_array,
-                         matching_indices=matching_indices_array,                            
-                         matching_scores=matching_scores_array,                             
-                         all_retrievedindices_scores_allqueries=all_retrievedindices_scores_allqueries_array,
-                         encoding_time=np.asarray([encoding_time//itr]),
-                         matching_time=np.asarray([matching_time//itr]))
+                query_indices=query_indices_array,
+                matching_indices=matching_indices_array,                            
+                matching_scores=matching_scores_array,
+                all_retrievedindices_scores_allqueries=all_retrievedindices_scores_allqueries_array,
+                encoding_time=np.asarray([encoding_time//itr]),
+                matching_time=np.asarray([matching_time//itr]))
+
         else:
             cwd=os.getcwd()
             precomputed_data=np.loadz(cwd+'/'+precomputed_directory+vpr_tech.replace("_Precomputed","")+'/'+'precomputed_data_corrected.npz' )
+
             query_indices_dict[vpr_tech]=precomputed_data['query_indices']
             matching_indices_dict[vpr_tech]=precomputed_data['matching_indices']
             matching_scores_dict[vpr_tech]=precomputed_data['matching_scores']
             all_retrievedindices_scores_allqueries_dict[vpr_tech]=precomputed_data['all_retrievedindices_scores_allqueries']
             encoding_time_dict[vpr_tech]=precomputed_data['encoding_time']  #NOTE: If the descriptors were not computed on the same computational platform as the one running this code, this value of encoding time is compromised and accordingly all the metrics that utilise this (like RMF etc) are not applicable. 
             matching_time_dict[vpr_tech]=precomputed_data['matching_time']  #NOTE: If the descriptors were not computed on the same computational platform as the one running this code, this value of matching time is compromised and accordingly all the metrics that utilise this (like RMF etc) are not applicable.
-        
+
     return query_indices_dict, matching_indices_dict, matching_scores_dict, encoding_time_dict, matching_time_dict, all_retrievedindices_scores_allqueries_dict, descriptor_shape_dict

@@ -20,13 +20,13 @@ from nengo_dl_vanilla_vpr_snn import *
 #vpr_dataset_directory='datasets/corridor/' #The path to a particular dataset you want to use for VPR Evaluation Mode 0. The folder 'datasets' is a sub-folder within the VPR-Bench folder that contains query images, ref images and ground_truth.npy.
 #vpr_precomputed_matches_directory='precomputed_matches/corridor/' # The path to storing or reading precomputed matching information for VPR Evaluation Mode 0. The folder 'precomputed_matches' is a sub-folder within the VPR-Bench folder. See below text for further understanding.
 
-dataset_name='Coral Environment Small' # This string is used when creating titles for plots in VPR Evaluation Mode 0, so please specify the dataset name here if you are using Mode 0.
-vpr_dataset_directory='datasets/coral_data4VPRBench_small/' #The path to a particular dataset you want to use for VPR Evaluation Mode 0. The folder 'datasets' is a sub-folder within the VPR-Bench folder that contains query images, ref images and ground_truth.npy.
-vpr_precomputed_matches_directory='precomputed_matches/coral_data4VPRBench_small/' # The path to storing or reading precomputed matching information for VPR Evaluation Mode 0. The folder 'precomputed_matches' is a sub-folder within the VPR-Bench folder. See below text for further understanding.
+#dataset_name='Coral Environment Small' # This string is used when creating titles for plots in VPR Evaluation Mode 0, so please specify the dataset name here if you are using Mode 0.
+#vpr_dataset_directory='datasets/coral_data4VPRBench_small/' #The path to a particular dataset you want to use for VPR Evaluation Mode 0. The folder 'datasets' is a sub-folder within the VPR-Bench folder that contains query images, ref images and ground_truth.npy.
+#vpr_precomputed_matches_directory='precomputed_matches/coral_data4VPRBench_small/' # The path to storing or reading precomputed matching information for VPR Evaluation Mode 0. The folder 'precomputed_matches' is a sub-folder within the VPR-Bench folder. See below text for further understanding.
 
-#dataset_name='Coral Environment' # This string is used when creating titles for plots in VPR Evaluation Mode 0, so please specify the dataset name here if you are using Mode 0.
-#vpr_dataset_directory='datasets/coral_data4VPRBench/' #The path to a particular dataset you want to use for VPR Evaluation Mode 0. The folder 'datasets' is a sub-folder within the VPR-Bench folder that contains query images, ref images and ground_truth.npy.
-#vpr_precomputed_matches_directory='precomputed_matches/coral_data4VPRBench/' # The path to storing or reading precomputed matching information for VPR Evaluation Mode 0. The folder 'precomputed_matches' is a sub-folder within the VPR-Bench folder. See below text for further understanding.
+dataset_name='Coral Environment' # This string is used when creating titles for plots in VPR Evaluation Mode 0, so please specify the dataset name here if you are using Mode 0.
+vpr_dataset_directory='datasets/coral_data4VPRBench/' #The path to a particular dataset you want to use for VPR Evaluation Mode 0. The folder 'datasets' is a sub-folder within the VPR-Bench folder that contains query images, ref images and ground_truth.npy.
+vpr_precomputed_matches_directory='precomputed_matches/coral_data4VPRBench/' # The path to storing or reading precomputed matching information for VPR Evaluation Mode 0. The folder 'precomputed_matches' is a sub-folder within the VPR-Bench folder. See below text for further understanding.
 
 """
 The above 'vpr_precomputed_matches_directory' is used when you already have the matching information 
@@ -80,23 +80,24 @@ vanilla_snn = snnobj.simnet
 #---------------------------#
 
 #if __name__ == "__main__":
-#parser = argparse.ArgumentParser()
-#parser.add_argument('-em','--evalmode', required=True, help='Specify Evaluation Mode (Possible value can be either of 0/1/2/3)', type=int)
-#parser.add_argument('-sm','--savematchinginfo', required=False, default=1, help='Flag for storing matching data after computation (Possible value can be 0/1)', type=int)
-#parser.add_argument('-dn','--datasetname', default='Corridor', required=False, help='Name of Dataset Used for Evaluation Mode 0. This is used for creating titles of plots.', type=str)
-#parser.add_argument('-ddir','--datasetdirectory', default='datasets/corridor/', required=False, help='Path to Dataset Directory Used for Evaluation Mode 0', type=str)
-#parser.add_argument('-mdir','--precomputedmatchesdirectory', default='precomputed_matches/corridor/', required=False, help='Optional Path to Precomputed Matches Directory Used for Evaluation Mode 0', type=str)
-#parser.add_argument('-techs','--VPRtechniquenames', nargs='+', help='List of names of VPR techniques which could be any of these (NetVLAD,RegionVLAD,CoHOG,HOG,AlexNet_VPR,AMOSNet,HybridNet,CALC)', required=True, type=str)
-#
-#args = vars(parser.parse_args())
-#
-#VPR_evaluation_mode=args["evalmode"]
-#save_matching_info=args["savematchinginfo"]
-#dataset_name=args["datasetname"]
-#vpr_dataset_directory=args["datasetdirectory"]
-#vpr_precomputed_matches_directory=args["precomputedmatchesdirectory"]
-#VPR_techniques=args["VPRtechniquenames"]
-#print(VPR_techniques)
+parser = argparse.ArgumentParser()
+parser.add_argument('-em','--evalmode', required=True, help='Specify Evaluation Mode (Possible value can be either of 0/1/2/3)', type=int)
+parser.add_argument('-sm','--savematchinginfo', required=False, default=1, help='Flag for storing matching data after computation (Possible value can be 0/1)', type=int)
+parser.add_argument('-dn','--datasetname', default='Corridor', required=False, help='Name of Dataset Used for Evaluation Mode 0. This is used for creating titles of plots.', type=str)
+parser.add_argument('-ddir','--datasetdirectory', default='datasets/corridor/', required=False, help='Path to Dataset Directory Used for Evaluation Mode 0', type=str)
+parser.add_argument('-mdir','--precomputedmatchesdirectory', default='precomputed_matches/corridor/', required=False, help='Optional Path to Precomputed Matches Directory Used for Evaluation Mode 0', type=str)
+parser.add_argument('-techs','--VPRtechniquenames', nargs='+', help='List of names of VPR techniques which could be any of these (NetVLAD,RegionVLAD,CoHOG,HOG,AlexNet_VPR,AMOSNet,HybridNet,CALC)', required=True, type=str)
+
+args = vars(parser.parse_args())
+
+VPR_evaluation_mode=args["evalmode"]
+save_matching_info=args["savematchinginfo"]
+dataset_name=args["datasetname"]
+vpr_dataset_directory=args["datasetdirectory"]
+vpr_precomputed_matches_directory=args["precomputedmatchesdirectory"]
+VPR_techniques=args["VPRtechniquenames"]
+print(VPR_techniques)
+
 if 'custom_vpr_tech' in VPR_techniques:
     exec_eval_mode(VPR_evaluation_mode, dataset_name, vpr_dataset_directory,vpr_precomputed_matches_directory, VPR_techniques, save_matching_info, scale_percent, vanilla_snn)
     vanilla_snn.close()

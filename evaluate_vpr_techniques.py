@@ -122,13 +122,23 @@ def evaluate_vpr_techniques(dataset_dir,precomputed_directory,techniques, save_d
 
         else:
             cwd=os.getcwd()
-            precomputed_data=np.loadz(cwd+'/'+precomputed_directory+vpr_tech.replace("_Precomputed","")+'/'+'precomputed_data_corrected.npz' )
+            try:
+                precomputed_data=np.load(cwd+'/'+precomputed_directory+vpr_tech.replace("_Precomputed","")+'/'+'precomputed_data_corrected.npy', allow_pickle=True, encoding='latin1')
 
-            query_indices_dict[vpr_tech]=precomputed_data['query_indices']
-            matching_indices_dict[vpr_tech]=precomputed_data['matching_indices']
-            matching_scores_dict[vpr_tech]=precomputed_data['matching_scores']
-            all_retrievedindices_scores_allqueries_dict[vpr_tech]=precomputed_data['all_retrievedindices_scores_allqueries']
-            encoding_time_dict[vpr_tech]=precomputed_data['encoding_time']  #NOTE: If the descriptors were not computed on the same computational platform as the one running this code, this value of encoding time is compromised and accordingly all the metrics that utilise this (like RMF etc) are not applicable. 
-            matching_time_dict[vpr_tech]=precomputed_data['matching_time']  #NOTE: If the descriptors were not computed on the same computational platform as the one running this code, this value of matching time is compromised and accordingly all the metrics that utilise this (like RMF etc) are not applicable.
+                query_indices_dict[vpr_tech]=precomputed_data[0]
+                matching_indices_dict[vpr_tech]=precomputed_data[1]
+                matching_scores_dict[vpr_tech]=precomputed_data[2]
+                all_retrievedindices_scores_allqueries_dict[vpr_tech]=precomputed_data[3]
+                encoding_time_dict[vpr_tech]=precomputed_data[4]  #NOTE: If the descriptors were not computed on the same computational platform as the one running this code, this value of encoding time is compromised and accordingly all the metrics that utilise this (like RMF etc) are not applicable. 
+                matching_time_dict[vpr_tech]=precomputed_data[5]  #NOTE: If the descriptors were not computed on the same computational platform as the one running this code, this value of matching time is compromised and accordingly all the metrics that utilise this (like RMF etc) are not applicable.
+            except FileNotFoundError: 
+                precomputed_data=np.load(cwd+'/'+precomputed_directory+vpr_tech.replace("_Precomputed","")+'/'+'precomputed_data_corrected.npz', allow_pickle=True, encoding='latin1')
+
+                query_indices_dict[vpr_tech]=precomputed_data['query_indices']
+                matching_indices_dict[vpr_tech]=precomputed_data['matching_indices']
+                matching_scores_dict[vpr_tech]=precomputed_data['matching_scores']
+                all_retrievedindices_scores_allqueries_dict[vpr_tech]=precomputed_data['all_retrievedindices_scores_allqueries']
+                encoding_time_dict[vpr_tech]=precomputed_data['encoding_time']  #NOTE: If the descriptors were not computed on the same computational platform as the one running this code, this value of encoding time is compromised and accordingly all the metrics that utilise this (like RMF etc) are not applicable. 
+                matching_time_dict[vpr_tech]=precomputed_data['matching_time']  #NOTE: If the descriptors were not computed on the same computational platform as the one running this code, this value of matching time is compromised and accordingly all the metrics that utilise this (like RMF etc) are not applicable.
 
     return query_indices_dict, matching_indices_dict, matching_scores_dict, encoding_time_dict, matching_time_dict, all_retrievedindices_scores_allqueries_dict, descriptor_shape_dict

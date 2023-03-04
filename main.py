@@ -10,6 +10,11 @@ need to execute (using ``python main.py'' in terminal).
 
 from execute_evaluation_mode import exec_eval_mode
 import argparse
+import numpy as np
+import nengo
+import tensorflow as tf
+import nengo_dl
+from nengo_dl_vanilla_vpr_snn import * #dont forget to import your network's header
 
 dataset_name='Corridor' # This string is used when creating titles for plots in VPR Evaluation Mode 0, so please specify the dataset name here if you are using Mode 0.
 vpr_dataset_directory='datasets/corridor/' #The path to a particular dataset you want to use for VPR Evaluation Mode 0. The folder 'datasets' is a sub-folder within the VPR-Bench folder that contains query images, ref images and ground_truth.npy.
@@ -56,10 +61,20 @@ So only one mode at a time. For VPR_evaluation_mode 1/2/3 just set 'VPR_techniqu
 
 save_matching_info=1 # If save_matching_info=0, save matching info in 'vpr_precomputed_matches_directory' for all the techniques in 'VPR_techniques' on the dataset specified in 'vpr_dataset_directory'.
 scale_percent=100 # Provision for resizing (with aspect-ratio maintained) of query and reference images between 0-100%. 100% is equivalent to NO resizing.
-    
-def main():     
-   exec_eval_mode(VPR_evaluation_mode, dataset_name, vpr_dataset_directory,vpr_precomputed_matches_directory, VPR_techniques, save_matching_info, scale_percent)
-     
+
+def main():
+    if 'custom_vpr_tech' in VPR_techniques: #mention your vpr_tech's name here 
+        # custom vpr network #              #this name will be used for the plots
+                                 #dont forget to import your network's header   
+        snnobj = VanillaVPRSNN() #initialize your your network here
+        vanilla_snn = snnobj.simnet
+
+        #---------------------------#
+        exec_eval_mode(VPR_evaluation_mode, dataset_name, vpr_dataset_directory,vpr_precomputed_matches_directory, VPR_techniques, save_matching_info, scale_percent, vanilla_snn)
+        vanilla_snn.close()
+    else:
+        exec_eval_mode(VPR_evaluation_mode, dataset_name, vpr_dataset_directory,vpr_precomputed_matches_directory, VPR_techniques, save_matching_info, scale_percent)
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('-em','--evalmode', required=True, help='Specify Evaluation Mode (Possible value can be either of 0/1/2/3)', type=int)
@@ -68,9 +83,9 @@ if __name__ == "__main__":
     parser.add_argument('-ddir','--datasetdirectory', default='datasets/corridor/', required=False, help='Path to Dataset Directory Used for Evaluation Mode 0', type=str)
     parser.add_argument('-mdir','--precomputedmatchesdirectory', default='precomputed_matches/corridor/', required=False, help='Optional Path to Precomputed Matches Directory Used for Evaluation Mode 0', type=str)
     parser.add_argument('-techs','--VPRtechniquenames', nargs='+', help='List of names of VPR techniques which could be any of these (NetVLAD,RegionVLAD,CoHOG,HOG,AlexNet_VPR,AMOSNet,HybridNet,CALC)', required=True, type=str)
-    
+
     args = vars(parser.parse_args())
-    
+
     VPR_evaluation_mode=args["evalmode"]
     save_matching_info=args["savematchinginfo"]
     dataset_name=args["datasetname"]
@@ -78,5 +93,7 @@ if __name__ == "__main__":
     vpr_precomputed_matches_directory=args["precomputedmatchesdirectory"]
     VPR_techniques=args["VPRtechniquenames"]
     print(VPR_techniques)
-    
+
     main()
+
+

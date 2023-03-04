@@ -50,7 +50,7 @@ def selective_import(VPR_technique):
 
 def compute_image_descriptors(robot_map, cstm_ntwrk, vpr_tech='CoHOG'): #Takes in a list of reference images as outputs a list of feature descriptors corresponding to these images. 
     compute_map_features, compute_query_desc, perform_VPR = selective_import(vpr_tech) #Imports the VPR template functions for the specified 'vpr_tech'
-    if cstm_ntwrk==None:
+    if cstm_ntwrk==None or vpr_tech!='custom_vpr_tech':
         map_features=compute_map_features(robot_map)
     else:
         map_features=compute_map_features(robot_map, cstm_ntwrk)
@@ -60,7 +60,7 @@ def compute_image_descriptors(robot_map, cstm_ntwrk, vpr_tech='CoHOG'): #Takes i
 
 def match_two_images(query_image,ref, cstm_ntwrk, vpr_tech='CoHOG'): #For matching two images only.
     compute_map_features, compute_query_desc, perform_VPR = selective_import(vpr_tech) #Imports the VPR template functions for the specified 'vpr_tech'
-    if cstm_ntwrk==None:
+    if cstm_ntwrk==None or vpr_tech!='custom_vpr_tech':
         ref_desc=compute_map_features(ref)
     else:
         ref_desc=compute_map_features(ref, cstm_ntwrk)
@@ -72,7 +72,7 @@ def match_two_images(query_image,ref, cstm_ntwrk, vpr_tech='CoHOG'): #For matchi
 def place_match(query_image,robot_map_features, cstm_ntwrk, vpr_tech='CoHOG'): #For matching an input query image with a precomputed map of reference descriptors.
     compute_map_features, compute_query_desc, perform_VPR = selective_import(vpr_tech) #Imports the VPR template functions for the specified 'vpr_tech'
     t1=time.time()
-    if cstm_ntwrk==None:
+    if cstm_ntwrk==None or vpr_tech!='custom_vpr_tech':
         query_desc=compute_query_desc(query_image)
     else:
         query_desc=compute_query_desc(query_image, cstm_ntwrk)

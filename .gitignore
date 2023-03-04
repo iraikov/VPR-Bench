@@ -90,6 +90,7 @@ ctf_env_records
 # some data folders
 nordland_original_data/
 oxford_data/
+precomputed_matches/
 
 # some VPR tecniques
 VPR_Techniques/AlexNet_VPR/

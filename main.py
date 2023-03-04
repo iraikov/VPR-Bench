@@ -14,7 +14,7 @@ import numpy as np
 import nengo
 import tensorflow as tf
 import nengo_dl
-from nengo_dl_vanilla_vpr_snn import * #dont forget to import your network's header
+from custom_model_classes.nengo_dl_vanilla_vpr_snn import * #dont forget to import your network's header
 
 dataset_name='Corridor' # This string is used when creating titles for plots in VPR Evaluation Mode 0, so please specify the dataset name here if you are using Mode 0.
 vpr_dataset_directory='datasets/corridor/' #The path to a particular dataset you want to use for VPR Evaluation Mode 0. The folder 'datasets' is a sub-folder within the VPR-Bench folder that contains query images, ref images and ground_truth.npy.

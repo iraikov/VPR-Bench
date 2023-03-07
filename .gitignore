@@ -90,6 +90,8 @@ ctf_env_records
 # some data folders
 nordland_original_data/
 oxford_data/
+precomputed_matches/
+datasets/
 
 # some VPR tecniques
 VPR_Techniques/AlexNet_VPR/
@@ -100,3 +102,7 @@ VPR_Techniques/NetVLAD/
 VPR_Techniques/RegionVLAD/
 variation_quantified_datasets/
 nengo_dl_vanilla_vpr_snn.py
+custom_model_classes/
+VPR_Techniques/attention_snn.py
+main_mua_vers.py
+

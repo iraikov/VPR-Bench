@@ -12,7 +12,7 @@ import os
 import glob
 import numpy as np
 
-def evaluate_vpr_techniques(dataset_dir,precomputed_directory,techniques, save_descriptors, cstm_ntwrk, scale_percent=100):
+def evaluate_vpr_techniques(dataset_dir, precomputed_directory, techniques, save_descriptors, cstm_ntwrk, scale_percent=100):
     
     everything_precomputed=1 
     for vpr_tech in techniques:

@@ -93,7 +93,5 @@ if __name__ == "__main__":
     vpr_precomputed_matches_directory=args["precomputedmatchesdirectory"]
     VPR_techniques=args["VPRtechniquenames"]
     print(VPR_techniques)
-
     main()
-
 

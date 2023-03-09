@@ -9,7 +9,7 @@ import cv2
 import numpy as np
 import time
 
-def compute_map_features(ref_map):  #ref_map is a 1D list of images in this case.
+def compute_map_features(ref_map, **kwargs):  #ref_map is a 1D list of images in this case.
     
     winSize = (512,512)
     blockSize = (16,16)
@@ -29,7 +29,7 @@ def compute_map_features(ref_map):  #ref_map is a 1D list of images in this case
         
     return ref_desc_list
 
-def compute_query_desc(query):
+def compute_query_desc(query, **kwargs):
         
     winSize = (512,512)
     blockSize = (16,16)
@@ -44,7 +44,7 @@ def compute_query_desc(query):
     
     return query_desc
 
-def perform_VPR(query_desc,ref_map_features): #ref_map_features is a 1D list of feature descriptors of reference images in this case.
+def perform_VPR(query_desc, ref_map_features, **kwargs): #ref_map_features is a 1D list of feature descriptors of reference images in this case.
 
     confusion_vector=np.zeros(len(ref_map_features))
     itr=0

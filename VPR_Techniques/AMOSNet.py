@@ -10,7 +10,7 @@ import caffe
 import numpy as np
 import os
    
-def compute_map_features(ref_map):   
+def compute_map_features(ref_map, **kwargs):   
     mean_npy = np.load(str(os.path.abspath(os.curdir))+'/VPR_Techniques/AmosNet/amosnet_mean.npy') # Input numpy array
     print(('Mean Array Shape:' + str(mean_npy.shape)))
     net = caffe.Net(str(os.path.abspath(os.curdir))+'/VPR_Techniques/AmosNet/deploy.prototxt', str(os.path.abspath(os.curdir))+'/VPR_Techniques/AmosNet/AmosNet.caffemodel', caffe.TEST)
@@ -84,7 +84,7 @@ def compute_map_features(ref_map):
     print('Reference images descriptors computed!')    
     return ref_features
 
-def compute_query_desc(image_query):
+def compute_query_desc(image_query, **kwargs):
     
     mean_npy = np.load(str(os.path.abspath(os.curdir))+'/VPR_Techniques/AmosNet/amosnet_mean.npy') # Input numpy array
     print(('Mean Array Shape:' + str(mean_npy.shape)))
@@ -156,7 +156,7 @@ def compute_query_desc(image_query):
 
     return features_query_local
 
-def perform_VPR(features_query_local,ref_map_features):
+def perform_VPR(features_query_local,ref_map_features, **kwargs):
 
     total_Ref_Images=len(ref_map_features)
     confusion_vector=np.zeros(total_Ref_Images)

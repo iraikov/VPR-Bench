@@ -261,7 +261,7 @@ def compute_matches(retrieved_all, ground_truth_info):
     return matches
 
 def performance_comparison(dataset_name, dataset_directory,vpr_techniques,query_all, retrieved_all, scores_all, encoding_time_all, matching_time_all, all_retrievedindices_scores_allqueries_dict,descriptor_shape_dict): #dataset_directory has a numpy file named ground_truth_new.npy
-    ground_truth_info=np.load(dataset_directory+'ground_truth_new.npy',allow_pickle=True) # A 2-dimensional array representing the range of reference image matches correponding to a query image   
+    ground_truth_info=np.load(dataset_directory+'/ground_truth_new.npy',allow_pickle=True) # A 2-dimensional array representing the range of reference image matches correponding to a query image   
     prec_dict={}
     recall_dict={}
     auc_pr_dict={}

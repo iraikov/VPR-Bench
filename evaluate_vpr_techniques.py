@@ -12,7 +12,7 @@ import os
 import glob
 import numpy as np
 
-def evaluate_vpr_techniques(dataset_dir, precomputed_directory, techniques, save_descriptors, cstm_ntwrk, scale_percent=100):
+def evaluate_vpr_techniques(dataset_dir, precomputed_directory, techniques, save_descriptors, scale_percent=100, model_config=None):
     
     everything_precomputed=1 
     for vpr_tech in techniques:
@@ -20,13 +20,13 @@ def evaluate_vpr_techniques(dataset_dir, precomputed_directory, techniques, save
             everything_precomputed=0
     
     if (everything_precomputed==0):
-        query_dir=dataset_dir+'query/' #Creating path of query directory as per the template proposed in our work.
-        ref_dir=dataset_dir+'ref/' #Creating path of ref directory as per the template proposed in our work.
+        query_dir=dataset_dir+'/query/' #Creating path of query directory as per the template proposed in our work.
+        ref_dir=dataset_dir+'/ref/' #Creating path of ref directory as per the template proposed in our work.
     
         ref_images_list=[]    
         ref_images_names=[os.path.basename(x) for x in glob.glob(ref_dir+'*.jpg')]  
         query_images_names=[os.path.basename(x) for x in glob.glob(query_dir+'*.jpg')]
-    
+
         for image_name in sorted(ref_images_names,key=lambda x:int(x.split(".")[0])):  #Reading all the reference images into a list
             print(('Reading Image: ' + ref_dir+image_name))
             ref_image=cv2.imread(ref_dir+image_name)
@@ -63,10 +63,12 @@ def evaluate_vpr_techniques(dataset_dir, precomputed_directory, techniques, save
         print(vpr_tech)
         
         if (vpr_tech.find('Precomputed')==-1):
-            ref_images_desc= compute_image_descriptors(ref_images_list, cstm_ntwrk, vpr_tech) #Compute descriptors of all reference images for the VPR technique.
-    
+            ref_images_desc= compute_image_descriptors(ref_images_list, vpr_tech, model_config) #Compute descriptors of all reference images for the VPR technique.
+
+            print(f"ref_images_desc.shape = {ref_images_desc.shape}")
             itr=0
             for image_name in sorted(query_images_names,key=lambda x:int(x.split(".")[0])):     #Iterating over each query image instead of loading them all at once, to save RAM space
+                print(f"query image: {image_name}")
                 query_image=cv2.imread(query_dir+image_name)
                 if (query_image is not None):
                     
@@ -79,7 +81,7 @@ def evaluate_vpr_techniques(dataset_dir, precomputed_directory, techniques, save
                     query_image = cv2.resize(query_image, dim, interpolation = cv2.INTER_AREA)
                     #####################################################
     
-                    matched, matching_index, score, t_e, t_m, all_retrievedindices_scores_perquery  = place_match(query_image,ref_images_desc, cstm_ntwrk, vpr_tech)  #Matches a given query image with all reference images.
+                    matched, matching_index, score, t_e, t_m, all_retrievedindices_scores_perquery  = place_match(query_image,ref_images_desc, vpr_tech, model_config=model_config)  #Matches a given query image with all reference images.
                     
                     query_indices_list.append(itr)
                     matching_indices_list.append(matching_index)
@@ -93,7 +95,7 @@ def evaluate_vpr_techniques(dataset_dir, precomputed_directory, techniques, save
                 else:
                     print((query_dir+image_name+' not a valid image!'))
             
-
+            assert(itr > 0)
             query_indices_dict[vpr_tech]=query_indices_list        
             matching_indices_dict[vpr_tech]=matching_indices_list
             matching_scores_dict[vpr_tech]=matching_scores_list

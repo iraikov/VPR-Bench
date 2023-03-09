@@ -8,9 +8,28 @@ for performance evaluation. Under normal scenarios, this is the only file that y
 need to execute (using ``python main.py'' in terminal).
 """
 
-from execute_evaluation_mode import exec_eval_mode
+import os
 import argparse
 import numpy as np
+import yaml
+from execute_evaluation_mode import exec_eval_mode
+
+def read_from_yaml(file_path, include_loader=None):
+    """
+
+    :param file_path: str (should end in '.yaml')
+    :return:
+    """
+    if os.path.isfile(file_path):
+        with open(file_path, 'r') as stream:
+            if include_loader is None:
+                Loader = yaml.FullLoader
+            else:
+                Loader = include_loader
+            data = yaml.load(stream, Loader=Loader)
+        return data
+    else:
+        raise IOError('read_from_yaml: invalid file_path: %s' % file_path)
 
 
 dataset_name='Corridor' # This string is used when creating titles for plots in VPR Evaluation Mode 0, so please specify the dataset name here if you are using Mode 0.
@@ -60,26 +79,14 @@ save_matching_info=1 # If save_matching_info=0, save matching info in 'vpr_preco
 scale_percent=100 # Provision for resizing (with aspect-ratio maintained) of query and reference images between 0-100%. 100% is equivalent to NO resizing.
 
 def main():
-    if 'custom_vpr_tech' in VPR_techniques: #mention your vpr_tech's name here 
-        # custom vpr network #              #this name will be used for the plots
-                                 #dont forget to import your network's header   
-        snnobj = VanillaVPRSNN() #initialize your your network here
-        vanilla_snn = snnobj.simnet
-
-        #---------------------------#
-        exec_eval_mode(VPR_evaluation_mode, dataset_name, vpr_dataset_directory,vpr_precomputed_matches_directory, VPR_techniques, save_matching_info, scale_percent, vanilla_snn)
-        vanilla_snn.close()
-    else:
-        exec_eval_mode(VPR_evaluation_mode, dataset_name, vpr_dataset_directory,vpr_precomputed_matches_directory, VPR_techniques, save_matching_info, scale_percent)
-
-if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('-em','--evalmode', required=True, help='Specify Evaluation Mode (Possible value can be either of 0/1/2/3)', type=int)
     parser.add_argument('-sm','--savematchinginfo', required=False, default=1, help='Flag for storing matching data after computation (Possible value can be 0/1)', type=int)
     parser.add_argument('-dn','--datasetname', default='Corridor', required=False, help='Name of Dataset Used for Evaluation Mode 0. This is used for creating titles of plots.', type=str)
     parser.add_argument('-ddir','--datasetdirectory', default='datasets/corridor/', required=False, help='Path to Dataset Directory Used for Evaluation Mode 0', type=str)
     parser.add_argument('-mdir','--precomputedmatchesdirectory', default='precomputed_matches/corridor/', required=False, help='Optional Path to Precomputed Matches Directory Used for Evaluation Mode 0', type=str)
-    parser.add_argument('-techs','--VPRtechniquenames', nargs='+', help='List of names of VPR techniques which could be any of these (NetVLAD,RegionVLAD,CoHOG,HOG,AlexNet_VPR,AMOSNet,HybridNet,CALC)', required=True, type=str)
+    parser.add_argument('-techs','--VPRtechniquenames', nargs='+', help='List of names of VPR techniques which could be any of these (NetVLAD,RegionVLAD,CoHOG,HOG,AlexNet_VPR,AMOSNet,HybridNet,CALC,NengoDL_VPR)', required=True, type=str)
+    parser.add_argument('-c','--config', required=False, type=str, help="optional model configuration in YAML format")
 
     args = vars(parser.parse_args())
 
@@ -89,6 +96,14 @@ if __name__ == "__main__":
     vpr_dataset_directory=args["datasetdirectory"]
     vpr_precomputed_matches_directory=args["precomputedmatchesdirectory"]
     VPR_techniques=args["VPRtechniquenames"]
+    model_config_path = args["config"]
     print(VPR_techniques)
-    main()
 
+    if model_config_path is not None:
+        model_config = read_from_yaml(model_config_path)
+
+    exec_eval_mode(VPR_evaluation_mode, dataset_name, vpr_dataset_directory, vpr_precomputed_matches_directory, VPR_techniques, save_matching_info, scale_percent, model_config)
+
+if __name__ == "__main__":
+    main()
+    

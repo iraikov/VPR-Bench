@@ -86,7 +86,7 @@ def conv_match_dotproduct(d1,d2,regional_gd,total_no_of_regions):            #As
     
 ##############################################################################################
 
-def compute_query_desc(query):
+def compute_query_desc(query, **kwargs):
     
     outlist=[]       
     img_2 = cv2.cvtColor(query, cv2.COLOR_BGR2GRAY)
@@ -130,7 +130,7 @@ def compute_query_desc(query):
         
         return outlist
         
-def compute_map_features(ref_map):  #ref_map is a 1D list of images in this case.
+def compute_map_features(ref_map, **kwargs):  #ref_map is a 1D list of images in this case.
 
     "INPUT: reference list of images to be matched."
     "OUTPUT: Feature descriptors of all reference images to be matched." 
@@ -156,7 +156,7 @@ def compute_map_features(ref_map):  #ref_map is a 1D list of images in this case
     print('Reference images descriptors computed!')   
     return ref_desc
     
-def perform_VPR(query_info,ref_map_features): #ref_map_features is a 1D list of feature descriptors of reference images in this case.
+def perform_VPR(query_info,ref_map_features, **kwargs): #ref_map_features is a 1D list of feature descriptors of reference images in this case.
 
     "INPUT: Query desc and reference list of images' features to be matched."
     "OUTPUT: Matching Score and Best Matched Image."  

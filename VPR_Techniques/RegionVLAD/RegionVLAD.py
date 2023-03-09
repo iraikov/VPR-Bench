@@ -101,7 +101,7 @@ def getVLAD(X,visualDictionary):
     Vlad = Vlad.reshape(k,d)    
     return Vlad 
 
-def compute_map_features(ref_map_images):
+def compute_map_features(ref_map_images, **kwargs):
         
     net = caffe.Net(protxt, model, caffe.TEST)
     batch_size = 1
@@ -156,7 +156,7 @@ def compute_map_features(ref_map_images):
     return ref_map_images_descs 
         
 
-def compute_query_desc(image_query):
+def compute_query_desc(image_query, **kwargs):
     image_query=image_query/255.0
     net = caffe.Net(protxt, model, caffe.TEST)
     batch_size = 1
@@ -199,7 +199,7 @@ def compute_query_desc(image_query):
     
     return VLAD 
    
-def perform_VPR(VLAD,ref_map_features):
+def perform_VPR(VLAD,ref_map_features, **kwargs):
     
     matching_scores=[]     
     for ref in ref_map_features:

@@ -33,7 +33,7 @@ def computeForwardPasses(net, im, transformer, resize_net):
 
     return d
 
-def compute_map_features(ref_map_images):
+def compute_map_features(ref_map_images, **kwargs):
     
     net_def_path=str(os.path.abspath(os.curdir))+'/VPR_Techniques/CALC/proto/deploy.prototxt'
     net_model_path=str(os.path.abspath(os.curdir))+'/VPR_Techniques/CALC/model/calc.caffemodel'
@@ -56,7 +56,7 @@ def compute_map_features(ref_map_images):
     
     return database
 
-def compute_query_desc(im):
+def compute_query_desc(im, **kwargs):
     
     net_def_path=str(os.path.abspath(os.curdir))+'/VPR_Techniques/CALC/proto/deploy.prototxt'
     net_model_path=str(os.path.abspath(os.curdir))+'/VPR_Techniques/CALC/model/calc.caffemodel'
@@ -74,7 +74,7 @@ def compute_query_desc(im):
     
     return descr
 
-def perform_VPR(descr,database):       
+def perform_VPR(descr,database, **kwargs):
 
     all_scores=[]
 

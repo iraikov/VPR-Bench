@@ -10,11 +10,11 @@ from evaluate_vpr_techniques import evaluate_vpr_techniques
 from performance_comparison import performance_comparison
 from perform_vpr_invariance_analysis import perform_vpr_invariance_analysis, perform_vpr_viewpointinvariance_analysis_validation, perform_vpr_illuminationinvariance_analysis_validation      
         
-def exec_eval_mode(VPR_evaluation_mode, dataset_name, dataset_directory,precomputed_directory,VPR_techniques, save_descriptors, scale_percent, cstm_vpr_ntwrk=None):
+def exec_eval_mode(VPR_evaluation_mode, dataset_name, dataset_directory,precomputed_directory,VPR_techniques, save_descriptors, scale_percent, model_config=None):
         
     if (VPR_evaluation_mode==0): #Evaluate VPR techniques on a given dataset for AUC, PCU, EP, RMF, RecallRate and others.
         print('Evaluation Mode 0')
-        query_all, retrieved_all, scores_all, encoding_time_all, matching_time_all, all_retrievedindices_scores_allqueries_dict, descriptor_shape_dict=evaluate_vpr_techniques(dataset_directory,precomputed_directory,VPR_techniques,save_descriptors, cstm_vpr_ntwrk, scale_percent)   #Evaluates all VPR techniques currently available in the framework on specified dataset. 
+        query_all, retrieved_all, scores_all, encoding_time_all, matching_time_all, all_retrievedindices_scores_allqueries_dict, descriptor_shape_dict=evaluate_vpr_techniques(dataset_directory,precomputed_directory,VPR_techniques,save_descriptors, scale_percent, model_config)   #Evaluates all VPR techniques currently available in the framework on specified dataset. 
         performance_comparison(dataset_name, dataset_directory, VPR_techniques,query_all, retrieved_all, scores_all, encoding_time_all, matching_time_all, all_retrievedindices_scores_allqueries_dict, descriptor_shape_dict)
 
     elif (VPR_evaluation_mode==1): #Invariance analysis of VPR techniques on Point Feature dataset

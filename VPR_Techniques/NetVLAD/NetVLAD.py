@@ -6,7 +6,7 @@ from . import netvlad_tf.net_from_mat as nfm
 from . import netvlad_tf.nets as nets
 import time
 
-def compute_map_features(ref_map_images):
+def compute_map_features(ref_map_images, **kwargs):
     
     ref_desc=[]
     tf.reset_default_graph()
@@ -33,7 +33,7 @@ def compute_map_features(ref_map_images):
         
     return ref_desc
 
-def compute_query_desc(image_query):
+def compute_query_desc(image_query, **kwargs):
     image_query=cv2.resize(image_query, (640,480), interpolation=cv2.INTER_CUBIC)
     tf.reset_default_graph()
     
@@ -52,7 +52,7 @@ def compute_query_desc(image_query):
     
     return query_desc
        
-def perform_VPR(query_desc,ref_map_features):
+def perform_VPR(query_desc,ref_map_features, **kwargs):
     all_scores=[]
     for i in range(len(ref_map_features)):
         t1=time.time()    

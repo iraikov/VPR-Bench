@@ -8,7 +8,7 @@ from os.path import dirname
 first_it = True
 A = None
 
-def compute_map_features(ref_map_images):
+def compute_map_features(ref_map_images, **kwargs):
     ref_map_images_features=[]
     
     alexnet_proto_path=os.path.join(dirname(__file__),"alexnet/deploy.prototxt")
@@ -45,7 +45,7 @@ def compute_map_features(ref_map_images):
     
     return ref_map_images_features
 
-def compute_query_desc(image_query):
+def compute_query_desc(image_query, **kwargs):
 
     alexnet_proto_path=os.path.join(dirname(__file__),"alexnet/deploy.prototxt")
     alexnet_weights=os.path.join(dirname(__file__),"alexnet/bvlc_alexnet.caffemodel")
@@ -78,7 +78,7 @@ def compute_query_desc(image_query):
     
     return alex_conv3
 
-def perform_VPR(alex_conv3,ref_map_features):
+def perform_VPR(alex_conv3,ref_map_features, **kwargs):
     
     matching_scores=[]
     

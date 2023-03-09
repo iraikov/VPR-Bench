@@ -40,47 +40,37 @@ def selective_import(VPR_technique):
     elif (VPR_technique=='HOG'):
         from VPR_Techniques.HOG_VPR import compute_map_features, compute_query_desc, perform_VPR
 
-    elif(VPR_technique=='custom_vpr_tech'):
-        from VPR_Techniques.custom_vpr_tech import compute_map_features, compute_query_desc, perform_VPR
-
-    elif(VPR_technique=='attention_snn'):
-        from VPR_Techniques.attention_snn import compute_map_features, compute_query_desc, perform_VPR
+    elif(VPR_technique=='NengoDL_VPR'):
+        from VPR_Techniques.NengoDL_VPR import compute_map_features, compute_query_desc, perform_VPR
 
     else:
-        sys.exit("Method {} not supported. Please check if letters' case match exactly.".format(VPR_technique))
+        sys.exit(f"Method {VPR_technique} not supported.")
    
     return compute_map_features, compute_query_desc, perform_VPR     
 
-def compute_image_descriptors(robot_map, cstm_ntwrk, vpr_tech='CoHOG'): #Takes in a list of reference images as outputs a list of feature descriptors corresponding to these images. 
+def compute_image_descriptors(image_map, vpr_tech='CoHOG', model_config=None): #Takes in a list of reference images as outputs a list of feature descriptors corresponding to these images. 
     compute_map_features, compute_query_desc, perform_VPR = selective_import(vpr_tech) #Imports the VPR template functions for the specified 'vpr_tech'
-    if cstm_ntwrk==None or (not (vpr_tech in ['custom_vpr_tech','attention_snn'])):
-        map_features=compute_map_features(robot_map)
-    else:
-        map_features=compute_map_features(robot_map, cstm_ntwrk)
-#    print(vpr_tech + ' Descriptor Size: ',np.asarray(map_features[0]).shape)
-#    print(vpr_tech + ' Descriptor Type: ',np.asarray(map_features[0]).dtype)
+        
+    map_features=compute_map_features(image_map, model_config=model_config)
+    
     return map_features
 
-def match_two_images(query_image,ref, cstm_ntwrk, vpr_tech='CoHOG'): #For matching two images only.
+def match_two_images(query_image, ref, vpr_tech='CoHOG', model_config=None): #For matching two images only.
+
     compute_map_features, compute_query_desc, perform_VPR = selective_import(vpr_tech) #Imports the VPR template functions for the specified 'vpr_tech'
-    if cstm_ntwrk==None or (not (vpr_tech in ['custom_vpr_tech','attention_snn'])):
-        ref_desc=compute_map_features(ref)
-    else:
-        ref_desc=compute_map_features(ref, cstm_ntwrk)
-    query_desc=compute_query_desc(query_image)
-    matching_score,matched_vertex,_=perform_VPR(query_desc,ref_desc) 
+    ref_desc=compute_map_features(ref, model_config)
+    query_desc=compute_query_desc(query_image, model_config=model_config)
+    matching_score, matched_vertex, _ = perform_VPR(query_desc, ref_desc, model_config) 
     
     return matching_score,matched_vertex
 
-def place_match(query_image,robot_map_features, cstm_ntwrk, vpr_tech='CoHOG'): #For matching an input query image with a precomputed map of reference descriptors.
+def place_match(query_image, map_features, vpr_tech='CoHOG', model_config=None): #For matching an input query image with a precomputed map of reference descriptors.
     compute_map_features, compute_query_desc, perform_VPR = selective_import(vpr_tech) #Imports the VPR template functions for the specified 'vpr_tech'
     t1=time.time()
-    if cstm_ntwrk==None or (not (vpr_tech in ['custom_vpr_tech','attention_snn'])):
-        query_desc=compute_query_desc(query_image)
-    else:
-        query_desc=compute_query_desc(query_image, cstm_ntwrk)
+    query_desc=compute_query_desc(query_image, model_config=model_config)
+
     t2=time.time()
-    matching_score,matched_vertex, confusion_vector=perform_VPR(query_desc,robot_map_features)  
+    matching_score,matched_vertex, confusion_vector=perform_VPR(query_desc, map_features, model_config=model_config)  
     t3=time.time()
     
-    return 1,matched_vertex,matching_score,(t2-t1),((t3-t2)/len(robot_map_features)), confusion_vector
+    return 1,matched_vertex,matching_score,(t2-t1),((t3-t2)/len(map_features)), confusion_vector

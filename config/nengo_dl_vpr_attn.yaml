@@ -1,0 +1,11 @@
+
+model source:
+  class: VPRAttention
+  module: nengo_dl_vpr_attention
+  kwargs: {"num_classes": 390}
+
+input shape: [28, 28]
+nsteps: 20
+
+model params: coralnet_20x20_20_50_30_0.01_0.95
+

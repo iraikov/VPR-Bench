@@ -183,18 +183,31 @@ def draw_ROC_Curves(fpr_dict,tpr_dict,techniques,dataset):
 #    plt.show()    
      
 def draw_PR_Curves(prec_dict,recall_dict,techniques,dataset):   
-    plt.figure()
+    #plt.figure()
+    #mua mod
+    fig = plt.figure()
+    ax = plt.subplot(111)
+    #----#
     for tech in techniques:
     
         plt.plot(recall_dict[tech], prec_dict[tech], label=tech.replace("_Precomputed",""))
-        plt.legend(loc='lower right', fontsize='large')          
+        #plt.legend(loc='lower right', fontsize='large')          
 
         plt.xlabel('Recall',fontsize='x-large')
         plt.ylabel('Precision',fontsize='x-large')
+    
+    #mua mod    
+    box = ax.get_position()
+    ax.set_position([box.x0, box.y0, box.width * 0.8, box.height])
+    ax.legend(loc='center left', bbox_to_anchor=(1, 0.5), fontsize='large')          
+    #----#
 
     plt.title(dataset)    
     plt.grid()     
-    plt.savefig('results/PRCurves/'+dataset+'-PRcurves'+'.png') 
+    #plt.savefig('results/PRCurves/'+dataset+'-PRcurves'+'.pdf')
+    #fig.tight_layout(rect=[0,0,0,0]) 
+    #fig.subplots_adjust(right=0.2)
+    plt.savefig('results/PRCurves/'+dataset+'-PRcurves'+'.pdf') 
 #    plt.show()           
 
 def draw_retrievalfps_vs_platformspeed(encoding_times, matching_times, vpr_techniques, const_distance=2): # Where const_distance=1 means that 1 frame must be available every 2 meters

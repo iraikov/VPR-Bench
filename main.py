@@ -14,6 +14,7 @@ import numpy as np
 import nengo
 import tensorflow as tf
 import nengo_dl
+from custom_model_classes.nengo_dl_vpr_attention import * #dont forget to import your network's header
 from custom_model_classes.nengo_dl_vanilla_vpr_snn import * #dont forget to import your network's header
 
 dataset_name='Corridor' # This string is used when creating titles for plots in VPR Evaluation Mode 0, so please specify the dataset name here if you are using Mode 0.
@@ -63,13 +64,23 @@ save_matching_info=1 # If save_matching_info=0, save matching info in 'vpr_preco
 scale_percent=100 # Provision for resizing (with aspect-ratio maintained) of query and reference images between 0-100%. 100% is equivalent to NO resizing.
 
 def main():
-    if 'custom_vpr_tech' in VPR_techniques: #mention your vpr_tech's name here 
+    if 'attention_snn' in VPR_techniques: #mention your vpr_tech's name here 
         # custom vpr network #              #this name will be used for the plots
                                  #dont forget to import your network's header   
-        snnobj = VanillaVPRSNN() #initialize your your network here
-        vanilla_snn = snnobj.simnet
+        net = VPRAttention(400) #initialize your your network here
+        
+        batch_size = 50
+
+        attention_snn = nengo_dl.Simulator(net, minibatch_size=batch_size)
+        
+        attention_snn.load_params("coralnet_attntn_20x20_93acc")
 
         #---------------------------#
+        exec_eval_mode(VPR_evaluation_mode, dataset_name, vpr_dataset_directory,vpr_precomputed_matches_directory, VPR_techniques, save_matching_info, scale_percent, attention_snn)
+        attention_snn.close()
+    elif 'vanilla_snn' in VPR_techniques: # vanilla snn 
+        snnobj = VanillaVPRSNN() #initialize your your network here
+        vanilla_snn = snnobj.simnet
         exec_eval_mode(VPR_evaluation_mode, dataset_name, vpr_dataset_directory,vpr_precomputed_matches_directory, VPR_techniques, save_matching_info, scale_percent, vanilla_snn)
         vanilla_snn.close()
     else:

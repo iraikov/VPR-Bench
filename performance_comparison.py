@@ -87,7 +87,7 @@ def compute_RecallRateAtN(N, all_retrievedindices_scores_allqueries, ground_trut
     for query in range(total_queries):
         top_N_retrieved_ind=np.argpartition(all_retrievedindices_scores_allqueries[query], -1*N)[-1*N:]
         for retr in top_N_retrieved_ind:        
-            if (retr in ground_truth_info[query][1]):
+            if (retr in ground_truth_info[query][1:]):
                 match_found=1
                 break
 
@@ -253,7 +253,7 @@ def compute_matches(retrieved_all, ground_truth_info):
     matches=[]
     itr=0
     for retr in retrieved_all:
-        if (retr in ground_truth_info[itr][1]):
+        if retr in ground_truth_info[itr][1:]:
             matches.append(1)
         else:
             matches.append(0)

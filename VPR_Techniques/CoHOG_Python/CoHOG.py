@@ -14,9 +14,10 @@ Created on Thu Jan  3 11:18:57 2019
 
 import cv2
 import numpy as np
+import time
 from .Hog_feature.Hog_feature.hog import initialize
 from .Hog_feature.Hog_feature.hog import extract
-from skimage.util import img_as_ubyte
+from skimage.util import img_as_ubyte, img_as_float
 from skimage.filters.rank import entropy
 from skimage.morphology import disk
 
@@ -88,7 +89,7 @@ def conv_match_dotproduct(d1,d2,regional_gd,total_no_of_regions):            #As
 
 def compute_query_desc(query, **kwargs):
     
-    outlist=[]       
+    outlist=[]
     img_2 = cv2.cvtColor(query, cv2.COLOR_BGR2GRAY)
     img_2rgb=query
      
@@ -102,11 +103,12 @@ def compute_query_desc(query, **kwargs):
         vector_2=np.asfortranarray(vector_2,dtype=np.float32)
         
         ################# Entropy Map ###############################
-    #        img_gray=cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
-        img_gray = cv2.resize(img_as_ubyte(img_2),(100,100))
-    #        ent_time=time.time()
+    #    img_gray=cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
+    
+        img_gray = img_as_float(img_2 / 255.0)
+        ent_time=time.time()
         entropy_image=cv2.resize(entropy(img_gray, disk(5)),(magic_width,magic_height))
-    #        print('Entropy Time:',time.time()-ent_time)
+        print('Entropy Time:',time.time()-ent_time)
         
         ################# Finding Regions #####################
         local_goodness=np.zeros([magic_height//cell_size-1, magic_width//cell_size-1], dtype=np.float32)
@@ -137,8 +139,12 @@ def compute_map_features(ref_map, **kwargs):  #ref_map is a 1D list of images in
     ref_desc=[]
     
     for ref in range(len(ref_map)):
-            
-        img_1 = cv2.cvtColor(ref_map[ref], cv2.COLOR_BGR2GRAY)
+
+        ref_img = ref_map[ref]
+        if len(ref_img.shape) == 2:
+            img_1 = ref_img.reshape((ref_img.shape[0],ref_img.shape[1],1))
+        else:
+            img_1 = cv2.cvtColor(ref_img, cv2.COLOR_BGR2GRAY)
     
         if (img_1 is not None):
             

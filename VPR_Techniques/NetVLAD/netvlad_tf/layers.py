@@ -1,3 +1,5 @@
+import numpy as np
+import keras
 import tensorflow.compat.v1 as tf
 tf.disable_v2_behavior()
 
@@ -9,9 +11,13 @@ def netVLAD(inputs, num_clusters, assign_weight_initializer=None,
     D = inputs.get_shape()[-1]
 
     # soft-assignment.
-    s = tf.layers.conv2d(inputs, K, 1, use_bias=False,
-                         kernel_initializer=assign_weight_initializer,
-                         name='assignment')
+    s = keras.layers.Conv2D(filters=K,                             # output channels
+                            kernel_size=1,                         # size 1 becomes int 1
+                            use_bias=False,                        # stays the same
+                            kernel_initializer=assign_weight_initializer,  # stays the same
+                            name='assignment'                      # stays the same
+                            )(inputs)
+    
     a = tf.nn.softmax(s)
 
     # Dims used hereafter: batch, H, W, desc_coeff, cluster
@@ -33,7 +39,8 @@ def netVLAD(inputs, num_clusters, assign_weight_initializer=None,
         # details, so sticking to matconvnet-style normalization here.
         v = matconvnetNormalize(v, 1e-12)
         v = tf.transpose(v, perm=[0, 2, 1])
-        v = matconvnetNormalize(tf.layers.flatten(v), 1e-12)
+        flattened = keras.ops.reshape(v, (-1, np.prod(v.shape[1:])))
+        v = matconvnetNormalize(flattened, 1e-12)
 
     return v
 

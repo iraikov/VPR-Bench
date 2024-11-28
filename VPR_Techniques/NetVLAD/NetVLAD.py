@@ -2,8 +2,9 @@ import cv2
 import numpy as np
 import tensorflow.compat.v1 as tf
 tf.disable_v2_behavior()
-from . import netvlad_tf.net_from_mat as nfm
-from . import netvlad_tf.nets as nets
+from . import netvlad_tf
+from .netvlad_tf import net_from_mat as nfm
+from .netvlad_tf import nets as nets
 import time
 
 def compute_map_features(ref_map_images, **kwargs):

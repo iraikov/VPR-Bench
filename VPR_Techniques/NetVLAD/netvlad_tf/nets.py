@@ -1,6 +1,7 @@
 import numpy as np
 import os
 from os.path import dirname
+import keras
 import tensorflow.compat.v1 as tf
 tf.disable_v2_behavior()
 
@@ -8,8 +9,8 @@ from . import layers as layers
 
 def defaultCheckpoint():
     return os.path.join(dirname(dirname(__file__)), 
-                              'checkpoints', 
-                              'vd16_pitts30k_conv5_3_vlad_preL2_intra_white')
+                        'checkpoints', 
+                        'vd16_pitts30k_conv5_3_vlad_preL2_intra_white')
 
 def vgg16NetvladPca(image_batch):
     ''' Assumes rank 4 input, first 3 dims fixed or dynamic, last dim 1 or 3. 
@@ -19,8 +20,12 @@ def vgg16NetvladPca(image_batch):
     with tf.variable_scope('vgg16_netvlad_pca'):
         # Gray to color if necessary.
         if image_batch.shape[3] == 1:
-            x = tf.nn.conv2d(image_batch, np.ones((1, 1, 1, 3)), 
-                                  np.ones(4).tolist(), 'VALID')
+            x = keras.ops.conv(
+                image_batch,
+                np.ones((1, 1, 1, 3)),  # kernel
+                strides=(1, 1, 1, 1),   # equivalent to np.ones(4).tolist()
+                padding='valid'         # 'VALID' in TF becomes lowercase 'valid'
+            )
         else :
             assert image_batch.shape[3] == 3
             x = image_batch
@@ -36,11 +41,17 @@ def vgg16NetvladPca(image_batch):
                 activation = tf.nn.relu
             else:
                 activation = None
-            return tf.layers.conv2d(inputs, out_dim, [3, 3], 1, padding='same',
-                                    activation=activation, 
-                                    name='conv%s' % numbers)
+            return keras.layers.Conv2D(filters=out_dim,          # number of output channels
+                                       kernel_size=(3, 3),       # [3, 3] becomes tuple (3, 3)
+                                       strides=1,                # can be int instead of tuple when same in all dimensions
+                                       padding='same',           # stays the same
+                                       activation=activation,     # stays the same
+                                       name='conv%s' % numbers   # stays the same
+                                       )(inputs)
         def vggPool(inputs):
-            return tf.layers.max_pooling2d(inputs, 2, 2)
+            return keras.layers.MaxPooling2D(pool_size=2,    # can be int instead of tuple when same in both dimensions
+                                             strides=2       # when not specified, strides defaults to same as pool_size
+                                             )(inputs)
         
         x = vggConv(x, '1_1', 64, True)
         x = vggConv(x, '1_2', 64, False)
@@ -73,8 +84,12 @@ def vgg16NetvladPca(image_batch):
         x = layers.netVLAD(x, 64)
         
         # PCA
-        x = tf.layers.conv2d(tf.expand_dims(tf.expand_dims(x, 1), 1), 
-                             4096, 1, 1, name='WPCA')
-        x = tf.nn.l2_normalize(tf.layers.flatten(x), dim=-1)
+        x = keras.layers.Conv2D(filters=4096, 
+                                kernel_size=1, 
+                                strides=1, 
+                                name='WPCA'
+                                )(keras.ops.expand_dims(keras.ops.expand_dims(x, 1), 1))
+        flattened = keras.ops.reshape(x, (-1, np.prod(x.shape[1:])))
+        x = tf.nn.l2_normalize(flattened, dim=-1)
         
     return x

@@ -9,7 +9,7 @@ DTYPE_FLOAT = np.float64
 ctypedef np.float_t DTYPE_FLOAT_t
 DTYPE_INT = int
 DTYPE_UINT8 = np.uint8
-ctypedef np.int_t DTYPE_INT_t
+ctypedef np.int DTYPE_INT_t
 
 import time
 

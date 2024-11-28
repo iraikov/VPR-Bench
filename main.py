@@ -87,6 +87,10 @@ def main():
     parser.add_argument('-mdir','--precomputedmatchesdirectory', default='precomputed_matches/corridor/', required=False, help='Optional Path to Precomputed Matches Directory Used for Evaluation Mode 0', type=str)
     parser.add_argument('-techs','--VPRtechniquenames', nargs='+', help='List of names of VPR techniques which could be any of these (NetVLAD,RegionVLAD,CoHOG,HOG,AlexNet_VPR,AMOSNet,HybridNet,CALC,NengoDL_VPR)', required=True, type=str)
     parser.add_argument('-c','--config', required=False, type=str, help="optional model configuration in YAML format")
+    parser.add_argument('-qimf','--query-images-file', required=False, type=str, help="optional file with query images")
+    parser.add_argument('-qlabf','--query-labels-file', required=False, type=str, help="optional file with query image labels")
+    parser.add_argument('-rimf','--reference-images-file', required=False, type=str, help="optional file with reference images")
+    parser.add_argument('-rlabf','--reference-labels-file', required=False, type=str, help="optional file with reference image labels")
 
     args = vars(parser.parse_args())
 
@@ -99,10 +103,27 @@ def main():
     model_config_path = args["config"]
     print(VPR_techniques)
 
+    query_images_file = args["query_images_file"]
+    query_labels_file = args["query_labels_file"]
+    ref_images_file = args["reference_images_file"]
+    ref_labels_file = args["reference_labels_file"]
+
+    model_config=None
     if model_config_path is not None:
         model_config = read_from_yaml(model_config_path)
 
-    exec_eval_mode(VPR_evaluation_mode, dataset_name, vpr_dataset_directory, vpr_precomputed_matches_directory, VPR_techniques, save_matching_info, scale_percent, model_config)
+    exec_eval_mode(VPR_evaluation_mode, dataset_name,
+                   vpr_dataset_directory, vpr_precomputed_matches_directory,
+                   VPR_techniques, save_matching_info, scale_percent,
+
+                   query_images_file,
+                   query_labels_file,
+                   ref_images_file,
+                   ref_labels_file,
+
+                   model_config,
+                   
+                   )
 
 if __name__ == "__main__":
     main()
